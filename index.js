@@ -1,18 +1,35 @@
-import express from 'express'
+// import express from 'express'
+
+// import { storage } from './config/multer.js';
+// import multer from 'multer';
+//import multer from 'multer';
+//to stores the files from the form
+// const storage=multer.diskStorage({
+//     destination:'uploads',
+//     filename:(req,file,cb)=>{
+//         cb(null,file.fieldname+'_'+Date.now()+file.originalname)
+//     }
+// })
 // import { userLogin, userSignup } from './controller.js';
 // import router from './route.js';
 // import { searchController, usernameController } from './controller.js';
 
 // const express=require('express');
 /*instance for the app by using express function*/
-const app=express()
-const PORT=3000;
-//set EJS as the view engine
-app.set('view engine','ejs')
-app.get('/',(req,res)=>{
-    const userName='Elon Musk'
-    res.render('index',{userName})
-})
+// const upload=multer({storage:storage,
+//     limits:{
+//         fileSize:1024000
+//     }
+// })
+// const app=express()
+// const PORT=3000;
+// const app=express()
+// //set EJS as the view engine
+// app.set('view engine','ejs')
+// app.get('/',(req,res)=>{
+//     const userName='Elon Musk'
+//     res.render('index',{userName})
+// })
 /*Define  a simple route
 if we are sending any data inthe api  then  we get it in req if we are sending any data from backend res object
 route
@@ -84,12 +101,12 @@ app.get('/contact',(req,res)=>{
     res.send('contact route')
 })*/
 //initialize expres app this method we can start our express server at this port number ehen erver the server started then call back function will be executed
-app.get('/things/:name/:id([0-9]{5})',(req,res)=>{
+/*app.get('/things/:name/:id([0-9]{5})',(req,res)=>{
     const {name,id}=req.params
     res.json({
         id,name
     })
-})
+})*/
 //catch all routes
 // app.get('*',(req,res)=>{
 //     res.send('Sorry This is an invalid URL')
@@ -133,13 +150,130 @@ app.use((err,req,res,next)=>{
     console.error(err.message)
     res.send('Internel Server Error')
 })*/
-// app.use(express.static('public'))
-// app.use(express.static('images'))
+/*app.use(express.static('public'))
+app.use(express.static('images'))
 app.use('/public',express.static('public'))
-app.use('/images',express.static('images'))
+app.use('/images',express.static('images'))*/
+// //to parse the url encoded form data
+// app.use(express.urlencoded({extended:true}))
+// app.use(upload.array())
+//we are sending single file
+// app.use(upload.single('image'))
+// app.get('/',(req,res)=>{
+//     res.send('Hello Express')
+// })
+// app.post('/form',(req,res)=>{
+//     console.log(req.body)
+//     console.log(req.file)
+//     res.send('Form Received')
+// })
+
+/*const upload=multer({
+    storage,
+    limits:{
+        fileSize:1024000
+    }
+})
+app.use(express.urlencoded({extended:true}))
+app.use(upload.single('image'))
 app.get('/',(req,res)=>{
     res.send('Hello Express')
 })
+app.post('/form',(req,res)=>{
+    console.log(req.body)
+    console.log(req.file)
+    res.send('Form Received')
+})*/
+// app.listen(PORT,()=>{
+//     console.log(`Server is running on http://localhost:${PORT}`)
+// })
+/*mongo db*/
+import express from 'express'
+import {connectDB} from './config/db.js'
+import { Person } from './models/Person.js'
+const app=express()
+const PORT=3000
+/*import mongoose from 'mongoose'
+const app=express()
+const PORT=3000
+const MONGO_URI='mongodb+srv://Thejasree25:Theja9182@cluster0.ekvj2.mongodb.net/express?retryWrites=true&w=majority&appName=Cluster0'
+await mongoose.connect(MONGO_URI).then(()=>{
+    console.log('Database Connected')
+})*/
+await connectDB()
+app.use(express.json())
+app.get('/',(req,res)=>{
+    res.send('Hello Express')
+})
+//saving data in mongo db
+app.post('/person',express.json(),async(req,res)=>{
+    console.log(req.body)
+    try{
+            const{email,name,age}=req.body
+            const newPerson=new Person({
+                name,
+                age,email
+            })
+            await newPerson.save()
+            console.log(newPerson)
+            res.send('person added')
+    }
+    catch(error){
+        res.send(error.message)
+    }
+})
+/*app.put('/person',express.json(),async(req,res)=>{
+    console.log(req.body)
+    const{email,name,age}=req.body
+    const newPerson=new Person({
+        name,
+        age,email
+    })
+    await newPerson.save()
+    console.log(newPerson)
+    res.send('person added')
+})
+app.put('/person',async(req,res)=>{
+
+    const{name,age}=req.body
+    const  personData=await Person.find({name,age})
+    const {id}=req.body
+    const personData=await Person.findById(id)
+    console.log(personData)
+    res.send("person updated")
+})*/
+/*app.put('/person',async(req,res)=>{
+    const {id}=req.body
+    const personData=await Person.findById(id)
+    personData.age=20
+    await personData.save()
+    console.log(personData)
+    res.send("person updated")
+})*/
+// app.put('/person',async(req,res)=>{
+//     const {id}=req.body
+//     const personData=await Person.findByIdAndUpdate(id,{age:'24'})
+//     console.log(personData)
+//     res.send("person updated")
+// })
+// app.put('/person',async(req,res)=>{
+//     const {name}=req.body
+//     const personData=await Person.findOne({name})
+//     console.log(personData)
+//     res.send("person updated")
+// })
+app.put('/person',async(req,res)=>{
+    const {Id}=req.body
+    const personData=await Person.findById({Id})
+    console.log(personData)
+    res.send("person updated")
+})
+//Deleting Data from mongo db
+app.delete('/person/:id',async(req,res)=>{
+    const {id}=req.params
+    await Person.findByIdAndDelete(id)
+    res.send('User Deleted')
+})
 app.listen(PORT,()=>{
-    console.log(`Server is running on http://localhost:${PORT}`)
+    console.log(`Server Running On the Port Number ${PORT}`)
 })
