@@ -188,11 +188,11 @@ app.post('/form',(req,res)=>{
 //     console.log(`Server is running on http://localhost:${PORT}`)
 // })
 /*mongo db*/
-import express from 'express'
+/*import express from 'express'
 import {connectDB} from './config/db.js'
 import { Person } from './models/Person.js'
 const app=express()
-const PORT=3000
+const PORT=3000*/
 /*import mongoose from 'mongoose'
 const app=express()
 const PORT=3000
@@ -200,7 +200,7 @@ const MONGO_URI='mongodb+srv://Thejasree25:Theja9182@cluster0.ekvj2.mongodb.net/
 await mongoose.connect(MONGO_URI).then(()=>{
     console.log('Database Connected')
 })*/
-await connectDB()
+/*await connectDB()
 app.use(express.json())
 app.get('/',(req,res)=>{
     res.send('Hello Express')
@@ -221,7 +221,7 @@ app.post('/person',express.json(),async(req,res)=>{
     catch(error){
         res.send(error.message)
     }
-})
+})*/
 /*app.put('/person',express.json(),async(req,res)=>{
     console.log(req.body)
     const{email,name,age}=req.body
@@ -262,6 +262,14 @@ app.put('/person',async(req,res)=>{
 //     console.log(personData)
 //     res.send("person updated")
 // })
+import express from 'express'
+import cookieParser from 'cookie-parser'
+const app=express()
+const PORT=3000
+app.get('/',(req,res)=>{
+    res.cookie('name','express-app')
+    res.send('Hello Express')
+})
 app.put('/person',async(req,res)=>{
     const {Id}=req.body
     const personData=await Person.findById({Id})
